@@ -45,4 +45,22 @@ router.post(
   authController.register
 );
 
+router.post(
+  "/login",
+  [
+    body("email")
+      .notEmpty()
+      .withMessage("emalreq")
+      .isEmail()
+      .withMessage("emailinv")
+      .trim()
+      .normalizeEmail(),
+    body("password")
+      .notEmpty()
+      .withMessage("passreq")
+      .trim(),
+  ],
+  authController.login
+);
+
 module.exports = router;
