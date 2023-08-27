@@ -10,37 +10,40 @@ router.post(
   [
     body("fullName")
       .notEmpty()
-      .withMessage("fnamereq")
+      .withMessage("required")
       .isLength({ min: 3 })
-      .withMessage("fnamelength")
+      .withMessage("minLength")
       .trim(),
     body("email")
       .notEmpty()
-      .withMessage("emalreq")
+      .withMessage("required")
       .isEmail()
-      .withMessage("emailinv")
+      .withMessage("pattern")
       .trim()
       .normalizeEmail(),
     body("password")
       .notEmpty()
-      .withMessage("passreq")
+      .withMessage("required")
       .isLength({ min: 8 })
-      .withMessage("passinv")
+      .withMessage("minLength")
+      .isLength({ max: 12 })
+      .withMessage("maxLength")
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
         "i"
       )
-      .withMessage("passinv")
+      .withMessage("pattern")
       .trim(),
     body("confirmPassword")
       .notEmpty()
       .withMessage("required")
       .custom((value, { req }) => {
         if (value !== req.body.password) {
-          throw new Error("passnomatch");
+          throw new Error("nomatch");
         }
         return true;
       }),
+    body("termsOfUse").notEmpty().withMessage("required"),
   ],
   authController.register
 );
@@ -55,10 +58,7 @@ router.post(
       .withMessage("emailinv")
       .trim()
       .normalizeEmail(),
-    body("password")
-      .notEmpty()
-      .withMessage("passreq")
-      .trim(),
+    body("password").notEmpty().withMessage("passreq").trim(),
   ],
   authController.login
 );
