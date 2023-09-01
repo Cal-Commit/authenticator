@@ -5,11 +5,15 @@ const jwtHelper = require("../helpers/jwt.helper");
 
 const { validationResult } = require("express-validator");
 
+require("dotenv").config();
+
 exports.authController = {
   register: async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ message: errors.array()[0] });
+      return res
+        .status(400)
+        .json({ type: "validation", message: errors.array()[0] });
     }
 
     const { fullName, email, password } = req.body;
@@ -40,15 +44,18 @@ exports.authController = {
         email: user.email,
         reputationPoints: user.reputationPoints,
         role: user.role,
+        created_at: user.created_at,
       });
     });
   },
   login: async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ message: errors.array()[0] });
+      return res
+        .status(400)
+        .json({ type: "validation", message: errors.array()[0] });
     }
-    
+
     const { email, password } = req.body;
 
     User.find({ email }).then(async (users) => {
