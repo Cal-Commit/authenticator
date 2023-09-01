@@ -63,4 +63,10 @@ router.post(
   authController.login
 );
 
+router.post("/oauth-github", authController.getGHAccessToken);
+
+router.post("/oauth-gh-check", authController.existingUserCheckGH);
+
+router.post("/authenticate-gh", authController.authenticateGH);
+
 module.exports = router;
