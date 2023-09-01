@@ -68,7 +68,7 @@ exports.authController = {
       const isMatch = await pwdHelper.checkPassword(user.password, password);
 
       if (!isMatch) {
-        return res.status(400).json({ message: "invcred" });
+        return res.status(400).json({ type: "err", message: "invcred" });
       }
 
       const token = await jwtHelper.generateAccessToken(user.email);
