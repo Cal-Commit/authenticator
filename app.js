@@ -8,6 +8,7 @@ require("dotenv").config()
 const app = express();
 
 const authRoutes = require("./routes/auth.routes");
+const oauthRoutes = require("./routes/oauth.routes");
 
 app.use(cors({
   origin: ["http://localhost:3000", "https://authenticator-frontend.vercel.app"],
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/auth", authRoutes);
+app.use("/oauth", oauthRoutes);
 
 mongoose.connect(process.env.CONNECTION_STRING).then(() => {
   app.listen(8081, () => {
