@@ -3,8 +3,6 @@ const User = require("../models/user.model");
 const pwdHelper = require("../helpers/pwd.helper");
 const jwtHelper = require("../helpers/jwt.helper");
 
-const { validationResult } = require("express-validator");
-
 require("dotenv").config();
 
 exports.oauthController = {
@@ -44,22 +42,17 @@ exports.oauthController = {
 
     return res.status(200).json({ userExists: false });
   },
-  authenticateGH: async (req, res) => {
+  authenticate: async (req, res) => {
     const { email } = req.body;
 
     const users = await User.find({ email });
 
-    if (users.length === 0) {
-      const newUser = new User({
-        fullName: req.body.fullName,
-        email,
-        password: require("crypto").randomBytes(64).toString("hex"),
-        reputationPoints: 0,
-        role: "user",
-        created_at: new Date(),
-      });
+    const pwdHash = await pwdHelper.hashPassword(
+      require("crypto").randomBytes(64).toString("hex")
+    );
 
-      const user = await newUser.save();
+    if (users.length !== 0) {
+      const user = users[0];
 
       const token = await jwtHelper.generateAccessToken(user.email);
 
@@ -73,7 +66,16 @@ exports.oauthController = {
       });
     }
 
-    const user = users[0];
+    const newUser = new User({
+      fullName: req.body.fullName,
+      email,
+      password: pwdHash,
+      reputationPoints: 0,
+      role: "user",
+      created_at: new Date(),
+    });
+
+    const user = await newUser.save();
 
     const token = await jwtHelper.generateAccessToken(user.email);
 
